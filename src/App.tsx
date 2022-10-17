@@ -1,4 +1,8 @@
-import Button from '@mui/material/Button';
+import { Routes, Route } from 'react-router-dom';
+import Header from './Layouts/Header';
+import Home from './Pages/Home';
+import About from './Pages/About';
+import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 
 import './App.css';
@@ -6,8 +10,14 @@ import './App.css';
 function App() {
   return (
     <div className='App'>
+      <CssBaseline />
+
+      <Header />
       <Container>
-        <Button variant='contained'>Hello World</Button>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/about' element={<About />} />
+        </Routes>
       </Container>
     </div>
   );
