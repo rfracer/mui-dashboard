@@ -11,9 +11,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import { useAuth } from '../../context/AuthContext';
+import { auth } from '../../firebase';
 
 const Header = () => {
-  const [auth, setAuth] = React.useState(true);
+  const currentUser = useAuth();
+  console.log(currentUser);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -22,6 +25,11 @@ const Header = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    auth.signOut();
+    handleClose();
   };
 
   return (
@@ -68,6 +76,9 @@ const Header = () => {
             >
               <MenuItem onClick={handleClose}>Profile</MenuItem>
               <MenuItem onClick={handleClose}>My account</MenuItem>
+              {currentUser && (
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              )}
             </Menu>
           </div>
         )}
