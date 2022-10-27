@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
 import { Login, Register } from './pages/Auth';
-import { AuthProvider } from './context/AuthContext';
+import { AddStudent } from './pages/AddStudent';
+import PrivateRoute from './context/PrivateRoute';
 import Header from './layouts/Header';
 import Home from './pages/Home';
 import About from './pages/About/About';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
-import PrivateRoute from './context/PrivateRoute';
 
 import './App.css';
 
@@ -33,6 +33,18 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path='/students'>
+            {/* <Route path='edit/:id' element={<EditStudent />} /> */}
+            <Route
+              path='add'
+              element={
+                <PrivateRoute>
+                  <AddStudent />
+                </PrivateRoute>
+              }
+            />
+            {/* <Route index element={<Students />} /> */}
+          </Route>
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
         </Routes>

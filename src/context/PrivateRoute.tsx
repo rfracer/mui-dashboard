@@ -1,13 +1,6 @@
-import React, { Component, ReactNode } from 'react';
-import {
-  Route,
-  Navigate,
-  RouteObject,
-  RouteProps,
-  useLocation,
-} from 'react-router-dom';
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { render } from 'react-dom';
 
 export default function PrivateRoute({ children }: { children: JSX.Element }) {
   const currentUser = useAuth();

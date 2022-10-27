@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { auth } from '../../firebase';
 import { signupSchema } from '../../schemas/signupSchema';
@@ -22,8 +22,6 @@ interface IFormInput {
 }
 
 export default function SignUp() {
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const {
