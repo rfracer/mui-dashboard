@@ -1,23 +1,27 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useAuth } from '../../context/AuthContext';
 import { auth } from '../../firebase';
+import { Link } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
 
-const Header = () => {
-  const currentUser = useAuth();
-  console.log(currentUser);
+type Props = {
+  open: boolean;
+  drawerWidth: number;
+  toggleDrawer: () => void;
+};
+
+const Header = ({ open, drawerWidth, toggleDrawer }: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const currentUser = useAuth();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -32,22 +36,53 @@ const Header = () => {
     handleClose();
   };
 
+  interface AppBarProps extends MuiAppBarProps {
+    open?: boolean;
+  }
+
+  const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== 'open',
+  })<AppBarProps>(({ theme, open }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    ...(open && {
+      marginLeft: drawerWidth,
+      width: `calc(100% - ${drawerWidth}px)`,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    }),
+  }));
+
   return (
-    <AppBar position='static'>
-      <Toolbar>
-        <IconButton
-          size='large'
-          edge='start'
-          color='inherit'
-          aria-label='menu'
-          sx={{ mr: 2 }}
-        >
-          <MenuIcon />
-        </IconButton>
+    <AppBar position='absolute' open={open}>
+      <Toolbar
+        sx={{
+          pr: '24px', // keep right padding when drawer closed
+        }}
+      >
+        {currentUser && (
+          <IconButton
+            edge='start'
+            color='inherit'
+            aria-label='open drawer'
+            onClick={toggleDrawer}
+            sx={{
+              marginRight: '36px',
+              ...(open && { display: 'none' }),
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
         <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-          Dashboard
+          Teacher App
         </Typography>
-        {auth && (
+        {currentUser && (
           <div>
             <IconButton
               size='large'
@@ -75,7 +110,9 @@ const Header = () => {
               onClose={handleClose}
             >
               <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
+              <Link style={{ textDecoration: 'none' }} to='/students'>
+                <MenuItem onClick={handleClose}>Students</MenuItem>
+              </Link>
               {currentUser && (
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               )}

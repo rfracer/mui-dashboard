@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Alert from '@mui/material/Alert';
+import Alert, { AlertColor } from '@mui/material/Alert';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { addStudentSchema } from '../../schemas/addStudentSchema';
 import FormControl from '@mui/material/FormControl';
@@ -24,12 +24,18 @@ interface IFormInput {
   age: string;
 }
 
+type Message = {
+  text: string;
+  type: AlertColor;
+};
+
 const AddStudent = () => {
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState<Message | null>(null);
 
   const {
     control,
     formState: { errors },
+    reset,
     handleSubmit,
   } = useForm<IFormInput>({ resolver: yupResolver(addStudentSchema) });
 
@@ -40,15 +46,20 @@ const AddStudent = () => {
     age,
   }) => {
     try {
-      const docRef = await addDoc(collection(db, 'users'), {
+      const docRef = await addDoc(collection(db, 'students'), {
         name,
         surname,
         className,
         age,
       });
+      reset();
+      setMessage({ text: 'User created sucessfully', type: 'success' });
       console.log('Document written with ID: ', docRef.id);
     } catch (e) {
-      console.error('Error adding document: ', e);
+      setMessage({
+        text: 'Some server error - try again or contact page admin',
+        type: 'error',
+      });
     }
   };
 
@@ -159,7 +170,7 @@ const AddStudent = () => {
       {errors.surname?.message && (
         <Alert severity='error'>{errors.surname.message}</Alert>
       )}
-      {error && <Alert severity='error'>{'Invalid login credentials'}</Alert>}
+      {message && <Alert severity={message.type}>{message.text}</Alert>}
     </Container>
   );
 };
